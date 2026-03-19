@@ -9,7 +9,7 @@
   "ec2", "s3", "lambda", "cloudfront", "rds",
   "sql", "mysql", "postgresql", "sqlite", "oracle", "nosql",
   "mongodb", "redis", "cassandra", "dynamodb", "firebase",
-  "rest", "rest api", "restful api", "api development", "api design",
+  "rest", "restful api", "api development", "api design",
   "graphql", "grpc",
   "microservices", "distributed systems", "system design",
   "git", "github", "gitlab", "bitbucket", "ci/cd", "jenkins", "github actions",

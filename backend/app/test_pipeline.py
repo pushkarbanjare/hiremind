@@ -1,13 +1,17 @@
-from services.parser import parse_resume
-from services.cleaner import clean_text
-from services.extractor import extract_skills
+from services.pipeline import analyze_resume
 
 file_path = "../notebooks/sample_resume.pdf"
 
-raw_text = parse_resume(file_path)
-cleaned = clean_text(raw_text)
-skills = extract_skills(raw_text)
+job_description = """
+We are looking for a Backend Software Engineer with experience in 
+Python, REST API development, and microservices architecture.
+The candidate should be familiar with Docker, AWS, and SQL databases.
+Experience with Kafka and distributed systems is a plus.
+"""
 
-print("Detected Skills:")
-for s in skills:
-    print("-", s)
+result = analyze_resume(file_path, job_description)
+
+print("\n==== FINAL RESULT ====")
+print("Score:", result["match_score"])
+print("Matched:", result["matched_skills"])
+print("Missing:", result["missing_skills"])
