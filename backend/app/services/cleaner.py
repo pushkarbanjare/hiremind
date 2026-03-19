@@ -1,4 +1,4 @@
-import re
+import re   #regular-expression
 
 def clean_text(text: str) -> str:
     text = text.lower()
