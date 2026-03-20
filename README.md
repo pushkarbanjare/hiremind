@@ -1,7 +1,6 @@
 # HireMind 
 
 HireMind is an AI-powered resume-job alignment analyzer that evaluates how well a candidate’s resume matches a given job description.
-
 It extracts skills from both the resume and the job description, compares them, and highlights missing competencies along with an overall match score.
 
 ## Features
@@ -24,10 +23,19 @@ The system follows a structured pipeline:
 7. **Scoring**: Calculate match percentage
 8. **Output Generation**: Display matched & missing skills
 
+## Architecture
+
+Backend follows a modular pipeline:
+- services/ → core logic (parser, extractor, matcher, scorer)
+- api/ → FastAPI routes
+- schemas/ → response validation
+
+This separation ensures scalability and testability.
+
 ## Tech Stack
 * **Backend:** FastAPI, Python  
 * **Frontend:** Next.js
-* **NLP:** spaCy (planned: sentence-transformers for semantic matching),
+* **NLP:** Rule-based skill extraction (planned: embeddings for semantic matching)
 
 ## Example Output
 ```
@@ -52,7 +60,6 @@ Missing Skills:
 * Better UI/UX for visualization
 
 ## Current Status
-
-* Prototype completed (end-to-end pipeline in notebook)
-* Backend API development in progress
-* Frontend integration pending
+* Backend API completed (modular + production-ready MVP)
+* End-to-end pipeline functional
+* Frontend in development
