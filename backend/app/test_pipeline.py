@@ -1,4 +1,4 @@
-from services.pipeline import analyze_resume
+from app.services.pipeline import analyze_resume
 
 file_path = "../notebooks/sample_resume.pdf"
 

@@ -1,5 +1,5 @@
 import re
-from services.skill_loader import load_skills
+from app.services.skill_loader import load_skills
 
 def extract_skills(text: str) -> list:
     skills = load_skills()

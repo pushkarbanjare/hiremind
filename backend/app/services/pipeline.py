@@ -1,8 +1,8 @@
-from services.parser import parse_resume
-from services.cleaner import clean_text
-from services.extractor import extract_skills
-from services.matcher import match_skills
-from services.scorer import calculate_score
+from app.services.parser import parse_resume
+from app.services.cleaner import clean_text
+from app.services.extractor import extract_skills
+from app.services.matcher import match_skills
+from app.services.scorer import calculate_score
 
 def analyze_resume(file_path: str, jd_text: str) -> dict:
     # Resume processing
