@@ -58,8 +58,3 @@ Missing Skills:
 * Improved skill extraction from project descriptions
 * Resume rewriting suggestions
 * Better UI/UX for visualization
-
-## Current Status
-* Backend API completed (modular + production-ready MVP)
-* End-to-end pipeline functional
-* Frontend in development
