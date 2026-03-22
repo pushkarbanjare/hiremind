@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AnalyzerForm({ onResult }: any) {
   const [file, setFile] = useState<File | null>(null);
@@ -8,6 +8,17 @@ export default function AnalyzerForm({ onResult }: any) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [fileName, setFileName] = useState("");
+  const [dots, setDots] = useState("");
+
+  useEffect(() => {
+    if(!loading) return;
+
+    const interval = setInterval(() => {
+      setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [loading]);
 
   const handleAnalyze = async () => {
     setError("");
@@ -24,7 +35,7 @@ export default function AnalyzerForm({ onResult }: any) {
     try {
       setLoading(true);
 
-      const res = await fetch("http://127.0.0.1:8000/analyze", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/analyze`, {
         method: "POST",
         body: formData,
       });
@@ -87,8 +98,14 @@ export default function AnalyzerForm({ onResult }: any) {
           loading ? "bg-gray-400" : "bg-black/90 hover:bg-black/75"
         }`}
       >
-        {loading ? "Analyzing..." : "Analyze"}
+        {loading ? `Analyzing${dots}` : "Analyze"}
       </button>
+
+      {loading && (
+        <p className="mt-3 text-sm text-gray-500 text-center font-bold">
+          First request may take up to 60 seconds due to server startup
+        </p>
+      )}
     </div>
   );
 }
