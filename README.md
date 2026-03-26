@@ -1,17 +1,16 @@
 # HireMind 
 
-HireMind is an AI-powered resume-job alignment analyzer that evaluates how well a candidate’s resume matches a given job description.
-It extracts skills from both the resume and the job description, compares them, and highlights missing competencies along with an overall match score.
+HireMind is an NLP-powered analyzer that evaluates resume-job alignment. By extracting and comparing technical competencies, it provides a "Match Score" and identifies exactly which skills the candidate is missing to pass the ATS.
 
-## Features
-* Resume PDF parsing using PyMuPDF
-* Text preprocessing and normalization
-* Skill extraction using predefined vocabulary
-* Resume-job skill comparison
-* Match Score calculation
-* Identification of missing skills
+## FEATURES
+- Resume PDF parsing using PyMuPDF
+- Text preprocessing and normalization
+- Skill extraction using predefined vocabulary
+- Resume-job skill comparison
+- Match Score calculation
+- Identification of missing and matched skills
 
-## How it Works (Pipeline)
+## PIPELINE
 The system follows a structured pipeline:
 
 1. **Resume Upload (PDF)**
@@ -23,21 +22,21 @@ The system follows a structured pipeline:
 7. **Scoring**: Calculate match percentage
 8. **Output Generation**: Display matched & missing skills
 
-## Architecture
+## ARCHITECTURE
 
 Backend follows a modular pipeline:
-- services/ → core logic (parser, extractor, matcher, scorer)
-- api/ → FastAPI routes
-- schemas/ → response validation
+- `services/:` core logic (Parser, Extractor, Matcher, Scorer)
+- `api/:` FastAPI endpoints
+- `schemas/:` Pydantic data validation
 
 This separation ensures scalability and testability.
 
-## Tech Stack
-* **Backend:** FastAPI, Python  
-* **Frontend:** Next.js
+## TECH STACK
+* **Backend:** FastAPI (Python)  
+* **Frontend:** Next.js, Tailwind CSS
 * **NLP:** Rule-based skill extraction (planned: embeddings for semantic matching)
 
-## Example Output
+## EXAMPLE OUTPUT
 ```
 Match Score: 71.43%
 
@@ -53,7 +52,7 @@ Missing Skills:
 - microservices
 ```
 
-## Future Improvements
+## FUTURE IMPROVEMENTS
 * Semantic skill matching using embeddings
 * Improved skill extraction from project descriptions
 * Resume rewriting suggestions
