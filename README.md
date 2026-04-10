@@ -1,6 +1,6 @@
 # HireMind 
 
-HireMind is an NLP-powered analyzer that evaluates resume-job alignment. By extracting and comparing technical competencies, it then provides a "Match Score" and identifies exactly which skills the candidate is missing to pass the ATS.
+HireMind is an NLP-powered resume analyzer that evaluates resume-job alignment. By extracting and comparing technical competencies, it then provides a "Match Score" and identifies exactly which skills the candidate is missing to pass the ATS.
 
 ## FEATURES
 - Resume PDF parsing using PyMuPDF
