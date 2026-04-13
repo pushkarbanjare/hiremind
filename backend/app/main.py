@@ -1,12 +1,9 @@
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.analyze import router as analyze_router
 from app.api.routes.auth import router as auth_router
-from dotenv import load_dotenv
-import os
-load_dotenv()
-
-print("MONGO_URL:", os.getenv("MONGO_URL"))
 
 app = FastAPI()
 

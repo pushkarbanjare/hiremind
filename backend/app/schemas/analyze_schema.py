@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List
 
+# ========== analyze response schema ==========
 class AnalyzeResponse(BaseModel):
     match_score: float
     matched_skills: List[str]

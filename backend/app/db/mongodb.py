@@ -2,10 +2,9 @@ from pymongo import MongoClient
 import os
 
 MONGO_URL = os.getenv("MONGO_URL")
-print("MONGO_URL:", MONGO_URL)
 
-client = MongoClient(MONGO_URL)
-db = client["hiremind_db"]
+client = MongoClient(MONGO_URL) # ==================== connection pool
+db = client["hiremind_db"]  # ==================== database instance
 
 def get_db():
     return db

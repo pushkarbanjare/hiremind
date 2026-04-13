@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 
+# ========== user schema ==========
 def user_schema(user) -> dict:
     return {
         "id": str(user["_id"]),
@@ -7,6 +8,7 @@ def user_schema(user) -> dict:
         "created_at": user["created_at"]
     }
 
+# ========== dictionary for user creation ==========
 def create_user_dict(email, hashed_password):
     return {
         "email": email,
