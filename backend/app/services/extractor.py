@@ -6,9 +6,8 @@ def extract_skills(text: str) -> list:
 
     detected = []
     for skill in skills:
-        # regex with word boundaries
-        pattern = r"\b" + re.escape(skill) + r"\b"
-        # r = rawstring & \b = word boundary & re.escape() = converts special chars safely like "c++" to "c\+\+"
+        # ========== regex with word boundaries ==========
+        pattern = r"\b" + re.escape(skill) + r"\b"  # ==================== r=rawstring, \b=word boundary, re.escape()=converts special chars safely like "c++" to "c\+\+"
 
         if re.search(pattern, text):
             detected.append(skill)

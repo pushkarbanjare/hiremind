@@ -8,11 +8,7 @@ def load_skills() -> list:
     with open(file_path, "r") as f:
         skills = json.load(f)
 
-    # normalize
-    skills = [skill.lower() for skill in skills]    # list comprehension
-
-    # new_skills = []   # simpler-form
-    # for skill in skills:
-    #     new_skills.append(skill.lower())
+    # ========== normalize skills ==========
+    skills = [skill.lower() for skill in skills]    # ==================== list comprehension(another form of for loop)
 
     return skills

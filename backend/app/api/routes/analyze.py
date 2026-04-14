@@ -3,7 +3,7 @@ import shutil
 import os
 from app.services.pipeline import analyze_resume
 from app.schemas.analyze_schema import AnalyzeResponse
-from app.core.deps import get_current_user
+from app.core.dependency import get_current_user
 
 router = APIRouter()
 
@@ -16,17 +16,11 @@ def analyze(
 ):
     # ========== validate JD ==========
     if not jd_text.strip():
-        raise HTTPException(
-            status_code=400,
-            detail="Job description cannot be empty"
-        )
+        raise HTTPException(status_code=400, detail="Job description can't be empty")
     
     # ========== validate file ==========
     if not file.filename.endswith(".pdf"):
-        raise HTTPException(
-            status_code=400,
-            detail="Only PDF files are supported"
-        )
+        raise HTTPException(status_code=400, detail="Only PDF files are supported")
 
     # ========== save file temporarily ==========
     temp_path = f"temp_{file.filename}"
@@ -41,7 +35,7 @@ def analyze(
     except Exception as e:
         # ========== cleanup ==========
         os.remove(temp_path)
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
     
     os.remove(temp_path)
 

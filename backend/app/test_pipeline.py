@@ -9,6 +9,7 @@ The candidate should be familiar with Docker, AWS, and SQL databases.
 Experience with Kafka and distributed systems is a plus.
 """
 
+# ========== analyze resume fn ==========
 result = analyze_resume(file_path, job_description)
 
 print("\n==== FINAL RESULT ====")
