@@ -1,6 +1,6 @@
 from app.services.pipeline import analyze_resume
 
-file_path = "../notebooks/sample_resume.pdf"
+resume_text = "Experienced Python developer with knowledge of REST APIs, Docker, and AWS."
 
 job_description = """
 We are looking for a Backend Software Engineer with experience in 
@@ -10,7 +10,7 @@ Experience with Kafka and distributed systems is a plus.
 """
 
 # ========== analyze resume fn ==========
-result = analyze_resume(file_path, job_description)
+result = analyze_resume(resume_text, job_description)
 
 print("\n==== FINAL RESULT ====")
 print("Score:", result["match_score"])

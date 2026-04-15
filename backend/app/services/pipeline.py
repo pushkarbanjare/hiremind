@@ -1,12 +1,12 @@
-from app.services.parser import parse_resume
-from app.services.cleaner import clean_text
-from app.services.extractor import extract_skills
-from app.services.matcher import match_skills
-from app.services.scorer import calculate_score
+from app.services.text.parser import parse_resume
+from app.services.text.cleaner import clean_text
+from app.services.skills.extractor import extract_skills
+from app.services.skills.matcher import match_skills
+from app.services.skills.scorer import calculate_score
 
-def analyze_resume(file_path: str, jd_text: str) -> dict:
+def analyze_resume(resume_text: str, jd_text: str) -> dict:
     # ========== resume processing ==========
-    raw_text = parse_resume(file_path)
+    raw_text = parse_resume(resume_text)
     cleaned_resume = clean_text(raw_text)
     resume_skills = extract_skills(cleaned_resume)
 
