@@ -1,42 +1,32 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
-import shutil
-import os
+from fastapi import APIRouter, HTTPException, Depends
 from app.services.pipeline import analyze_resume
 from app.schemas.analyze_schema import AnalyzeResponse
 from app.core.dependency import get_current_user
+from app.db.mongodb import get_db
 
 router = APIRouter()
 
 # ========== analyze route ==========
 @router.post("/analyze", response_model=AnalyzeResponse)
-def analyze(
-    file: UploadFile = File(...),
-    jd_text: str = Form(...),
-    user: str = Depends(get_current_user),  # ==================== protected route
-):
+def analyze(jd_text: str, user: str = Depends(get_current_user)):
+    db = get_db()
+    resumes = db["resumes"]
+
     # ========== validate JD ==========
     if not jd_text.strip():
         raise HTTPException(status_code=400, detail="Job description can't be empty")
     
-    # ========== validate file ==========
-    if not file.filename.endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Only PDF files are supported")
-
-    # ========== save file temporarily ==========
-    temp_path = f"temp_{file.filename}"
-
-    with open(temp_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)   # ==================== stream file from memory to disk
+    # ========== fetch resume ==========
+    resume = resumes.find_one({"user_id": user})
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found, please upload Resume first")
     
+    resume_text = resume["resume_text"]
 
     try:
         # ========== call pipeline ==========
-        result = analyze_resume(temp_path, jd_text)
-    except Exception as e:
-        # ========== cleanup ==========
-        os.remove(temp_path)
+        result = analyze_resume(resume_text, jd_text)
+    except Exception:
         raise HTTPException(status_code=500, detail="Internal Server Error")
-    
-    os.remove(temp_path)
 
     return result

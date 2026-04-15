@@ -27,7 +27,7 @@ def signup(user: UserSignup):
         raise HTTPException(status_code=400, detail="User already exists")
     
     hashed = hash_password(user.password)
-    user_data = create_user_dict(user.email, hashed)
+    user_data = create_user_dict(user.email, user.name, hashed)
     users.insert_one(user_data)
 
     return {"message": "User created successfully"}
