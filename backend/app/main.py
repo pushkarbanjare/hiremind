@@ -11,7 +11,7 @@ app = FastAPI()
 # ========== middleware layer ==========
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://hiremind-frontend-voin.onrender.com"],
+    allow_origins=["http://localhost:3000", "https://hiremind-frontend-voin.onrender.com", "https://hiremind-web.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
