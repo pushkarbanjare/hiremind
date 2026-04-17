@@ -1,9 +1,8 @@
-import re   #regular-expression
+import re   # ==================== regular expression
 
 def clean_text(text: str) -> str:
     text = text.lower()
     text = text.replace("\n", " ")
     text = re.sub(r"\s+", " ", text)
     text = text.strip()
-
     return text
