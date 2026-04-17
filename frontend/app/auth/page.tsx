@@ -134,7 +134,7 @@ export default function AuthPage() {
             setIsLogin(true);
             handleSubmit({
               email: "test@mail.com",
-              password: "test",
+              password: "test@123",
             });
           }}
           className="w-full text-sm text-gray-600 hover:underline"
