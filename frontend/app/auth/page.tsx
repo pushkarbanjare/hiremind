@@ -13,10 +13,16 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (override?: {
+    email?: string;
+    password?: string;
+  }) => {
     setError("");
 
-    if (!email || !password || (!isLogin && !name)) {
+    const finalEmail = override?.email ?? email;
+    const finalPassword = override?.password ?? password;
+
+    if (!finalEmail || !finalPassword || (!isLogin && !name)) {
       setError("Please fill all fields");
       return;
     }
@@ -25,13 +31,16 @@ export default function AuthPage() {
       setLoading(true);
 
       const endpoint = isLogin ? "/auth/login" : "/auth/signup";
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(
-          isLogin ? { email, password } : { email, password, name },
+          isLogin
+            ? { email: finalEmail, password: finalPassword }
+            : { email: finalEmail, password: finalPassword, name },
         ),
       });
 
@@ -49,7 +58,7 @@ export default function AuthPage() {
         setIsLogin(true);
         setError("Account created. Please login.");
       }
-    } catch (err) {
+    } catch {
       setError("Server error");
     } finally {
       setLoading(false);
@@ -105,7 +114,22 @@ export default function AuthPage() {
 
         {/* ========== button for login/signup ========== */}
         <button
-          onClick={handleSubmit}
+          onClick={() => {
+            setIsLogin(true);
+
+            handleSubmit({
+              email: "test@mail.com",
+              password: "test",
+            });
+          }}
+          className="btn w-full my-2"
+        >
+          Login as Demo
+        </button>
+
+        {/* ========== button for login/signup ========== */}
+        <button
+          onClick={() => handleSubmit()}
           disabled={loading}
           className="btn w-full"
         >
