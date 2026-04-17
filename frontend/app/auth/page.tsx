@@ -17,11 +17,12 @@ export default function AuthPage() {
     email?: string;
     password?: string;
   }) => {
+    // ========== reset error state ==========
     setError("");
 
+    // ========== determine whether to use overridden or state values ==========
     const finalEmail = override?.email ?? email;
     const finalPassword = override?.password ?? password;
-
     if (!finalEmail || !finalPassword || (!isLogin && !name)) {
       setError("Please fill all fields");
       return;
@@ -30,8 +31,9 @@ export default function AuthPage() {
     try {
       setLoading(true);
 
+      // ========== set api endpoint ==========
       const endpoint = isLogin ? "/auth/login" : "/auth/signup";
-
+      // ========== post req to backend ==========
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
         method: "POST",
         headers: {
@@ -52,9 +54,11 @@ export default function AuthPage() {
       }
 
       if (isLogin) {
+        // ========== store token and redirect to dashboard ==========
         localStorage.setItem("token", data.access_token);
         router.push("/dashboard");
       } else {
+        // ========== switch to login after successful signup ==========
         setIsLogin(true);
         setError("Account created. Please login.");
       }
@@ -67,26 +71,30 @@ export default function AuthPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
-      <div className="card w-full max-w-md">
+      <div className="card w-full max-w-md space-y-5">
         {/* ========== title ========== */}
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          {isLogin ? "Login" : "Create Account"}
-        </h2>
+        <div className="text-center">
+          <h2 className="text-2xl font-bold">
+            {isLogin ? "Welcome back" : "Create your account"}
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            {isLogin
+              ? "Login to continue"
+              : "Start analyzing your resume today"}
+          </p>
+        </div>
 
-        {/* ========== name for signup only ========== */}
-        {!isLogin && (
-          <div className="mb-4">
+        {/* ========== form ========== */}
+        <div className="space-y-4">
+          {!isLogin && (
             <input
               placeholder="Full Name"
               className="input"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-          </div>
-        )}
+          )}
 
-        {/* ========== email ========== */}
-        <div className="mb-4">
           <input
             type="email"
             placeholder="Email"
@@ -94,10 +102,7 @@ export default function AuthPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-        </div>
 
-        {/* ========== password ========== */}
-        <div className="mb-4">
           <input
             type="password"
             placeholder="Password"
@@ -109,25 +114,12 @@ export default function AuthPage() {
 
         {/* ========== error ========== */}
         {error && (
-          <div className="mb-4 text-sm text-red-600 text-center">{error}</div>
+          <div className="text-sm text-red-600 text-center bg-red-50 py-2 rounded">
+            {error}
+          </div>
         )}
 
-        {/* ========== button for login/signup ========== */}
-        <button
-          onClick={() => {
-            setIsLogin(true);
-
-            handleSubmit({
-              email: "test@mail.com",
-              password: "test",
-            });
-          }}
-          className="btn w-full my-2"
-        >
-          Login as Demo
-        </button>
-
-        {/* ========== button for login/signup ========== */}
+        {/* ========== action ========== */}
         <button
           onClick={() => handleSubmit()}
           disabled={loading}
@@ -136,15 +128,29 @@ export default function AuthPage() {
           {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
         </button>
 
-        {/* ========== toggle btwn login/signup ========== */}
-        <p className="mt-4 text-sm text-center">
+        {/* ========== demo login ========== */}
+        <button
+          onClick={() => {
+            setIsLogin(true);
+            handleSubmit({
+              email: "test@mail.com",
+              password: "test",
+            });
+          }}
+          className="w-full text-sm text-gray-600 hover:underline"
+        >
+          Login as Demo
+        </button>
+
+        {/* ========== toggle ========== */}
+        <p className="text-sm text-center text-gray-600">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <span
             onClick={() => {
               setIsLogin(!isLogin);
               setError("");
             }}
-            className="underline cursor-pointer"
+            className="font-medium cursor-pointer hover:underline"
           >
             {isLogin ? "Sign up" : "Login"}
           </span>
