@@ -1,8 +1,9 @@
-# HireMind 
+# HireMind
 
 HireMind is a NLP-powered resume analyzer that evaluates resume-job alignment. By extracting and comparing technical competencies, it then provides a "Match Score" and identifies exactly which skills the candidate is missing to pass the ATS.
 
 ## FEATURES
+
 - Resume PDF parsing using PyMuPDF
 - Text preprocessing and normalization
 - Skill extraction using predefined vocabulary
@@ -11,6 +12,7 @@ HireMind is a NLP-powered resume analyzer that evaluates resume-job alignment. B
 - Identification of missing and matched skills
 
 ## PIPELINE
+
 The system follows a structured pipeline:
 
 1. **Resume Upload (PDF)**
@@ -24,19 +26,51 @@ The system follows a structured pipeline:
 
 ## ARCHITECTURE
 
-Backend follows a modular pipeline:
-- `services/:` core logic (Parser, Extractor, Matcher, Scorer)
-- `api/:` FastAPI endpoints
-- `schemas/:` Pydantic data validation
+Backend follows a modular and layered architecture:
 
-This separation ensures scalability and testability.
+- `api/` → Route handlers (FastAPI endpoints)
+- `services/` → Core business logic (Parser, Extractor, Matcher, Scorer)
+- `schemas/` → Data validation using Pydantic
+- `db/` → MongoDB integration and models
+
+Pipeline-based design ensures separation of concerns and easier extensibility.
+
+Frontend is built using Next.js with a component-driven structure and protected routes for authenticated access.
+
+## AUTHENTICATION FLOW
+
+- User signs up or logs in via `/auth`
+- Backend generates JWT token
+- Token is stored on client side
+- All protected routes require `Authorization: Bearer <token>`
+- Backend validates token and extracts user identity for request handling
+
+## FILE HANDLING DESIGN
+
+- Resume is uploaded as a PDF file
+- Stored on server filesystem (`/uploads`)
+- File path is stored in MongoDB
+- Text is extracted using PyMuPDF and stored for fast reuse
+- Enables separation between raw file storage and processed data
+
+## API DESIGN
+
+- Authentication using JWT (issued on login, sent via Authorization header)
+- Resume handled as PDF upload (not raw text input)
+- Text is extracted and stored for analysis
+- Analysis endpoint accepts job description as JSON payload
 
 ## TECH STACK
-* **Backend:** FastAPI (Python)  
-* **Frontend:** Next.js, Tailwind CSS
-* **NLP:** Rule-based skill extraction (planned: embeddings for semantic matching)
+
+- **Backend:** FastAPI (Python)
+- **Frontend:** Next.js, Tailwind CSS
+- **NLP:** Rule-based skill extraction (planned: embeddings for semantic matching)
+- **Auth:** JWT-based authentication (HTTP Bearer tokens)
+- **Storage:** Local file storage for resumes (PDF) with MongoDB metadata
+- **Deployment:** Backend on Render, Frontend on Vercel
 
 ## EXAMPLE OUTPUT
+
 ```
 Match Score: 71.43%
 
@@ -52,8 +86,20 @@ Missing Skills:
 - microservices
 ```
 
+Key Endpoints:
+
+- `POST /auth/signup` → Register user
+- `POST /auth/login` → Login & receive token
+- `POST /resume/` → Upload resume (PDF)
+- `GET /resume/` → View resume PDF
+- `GET /resume/text` → View extracted resume text
+- `PUT /resume/` → Update resume
+- `DELETE /resume/` → Delete resume
+- `POST /analyze` → Analyze resume vs job description
+
 ## FUTURE IMPROVEMENTS
-* Semantic skill matching using embeddings
-* Improved skill extraction from project descriptions
-* Resume rewriting suggestions
-* Better UI/UX for visualization
+
+- Semantic skill matching using embeddings
+- Improved skill extraction from project descriptions
+- Resume rewriting suggestions
+- Better UI/UX for visualization
