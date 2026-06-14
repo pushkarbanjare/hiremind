@@ -1,4 +1,4 @@
-from app.services.pipeline import analyze_resume
+from backend.app.tests.services.pipeline import analyze_resume
 
 resume_text = "Experienced Python developer with knowledge of REST APIs, Docker, and AWS."
 

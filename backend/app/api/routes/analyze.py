@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
-from app.services.pipeline import analyze_resume
-from app.schemas.analyze_schema import AnalyzeResponse, AnalyzeRequest
+from backend.app.tests.services.pipeline import analyze_resume
+from app.database.schemas.analyze_schema import AnalyzeResponse, AnalyzeRequest
 from app.core.dependency import get_current_user
-from app.db.mongodb import get_db
+from app.database.mongodb import get_db
 
 router = APIRouter()
 
