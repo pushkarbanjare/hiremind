@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
 from fastapi.responses import FileResponse
 from app.database.mongodb import get_db
 from app.database.models.resume import create_resume_dict
+from app.database.schemas.resume import ResumeTextResponse
 from app.core.dependency import get_current_user
-from app.database.schemas.resume_schema import ResumeTextResponse
 from datetime import datetime, timezone
 import os
 import fitz

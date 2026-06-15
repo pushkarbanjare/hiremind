@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from backend.app.tests.services.pipeline import analyze_resume
-from app.database.schemas.analyze_schema import AnalyzeResponse, AnalyzeRequest
+from app.tests.services.analyze import analyze_resume
+from app.database.schemas.analyze import AnalyzeResponse, AnalyzeRequest
 from app.core.dependency import get_current_user
 from app.database.mongodb import get_db
 

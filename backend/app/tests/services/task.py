@@ -1,5 +1,18 @@
 import re, json, os
 
+# ========== parse resume ==========
+def parse_resume(resume_text: str) -> str:
+    return resume_text
+
+# ========== clean text ==========
+def clean_text(text: str) -> str:
+    text = text.lower()
+    text = text.replace("\n", " ")
+    text = re.sub(r"\s+", " ", text)
+    text = text.strip()
+    return text
+
+# ========== load skills ==========
 def load_skills() -> list:
     # base_dir = os.path.dirname(os.path.dirname(__file__))
     # file_path = os.path.join(base_dir, "data", "skills.json")
@@ -12,6 +25,7 @@ def load_skills() -> list:
     # ========== normalize skills ==========
     return [skill.lower() for skill in skills]    # ==================== list comprehension(another form of for loop)
 
+# ========== extract skills ==========
 def extract_skills(text: str) -> list:
     skills = load_skills()
     detected = []
@@ -41,7 +55,7 @@ def match_skills(resume_skills: list, jd_skills: list) -> dict:
         "missing": missing
     }
 
-# ========== calc score logic ==========
+# ========== score logic ==========
 def calculate_score(matched: list, jd_skills: list) -> float:
     if len(jd_skills) == 0:
         return 0.0

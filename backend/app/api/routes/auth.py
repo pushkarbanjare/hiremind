@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from app.database.schemas.auth_schema import UserLogin, UserSignup
 from app.database.mongodb import get_db
 from app.database.models.user import create_user_dict
+from app.database.schemas.auth import UserLogin, UserSignup
 from app.core.security import create_access_token
 from passlib.context import CryptContext
 
