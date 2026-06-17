@@ -1,4 +1,4 @@
-from backend.app.tests.services.task import parse_resume, clean_text, extract_skills, match_skills, calculate_score
+from app.services.task import parse_resume, clean_text, extract_skills, match_skills, calculate_score
 
 def analyze_resume(resume_text: str, jd_text: str) -> dict:
     # ========== resume processing ==========
