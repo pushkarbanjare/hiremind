@@ -1,12 +1,11 @@
 from pydantic import BaseModel, EmailStr
 
 # ========== signup schema ==========
-class UserSignup(BaseModel):
+class SignupRequest(BaseModel):
     email: EmailStr
-    name: str
     password: str
     
-# ========== login route ==========
-class UserLogin(BaseModel):
+# ========== login schema ==========
+class LoginRequest(BaseModel):
     email: EmailStr
     password: str
