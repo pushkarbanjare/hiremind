@@ -12,7 +12,6 @@ ALGORITHM = os.getenv("ALGORITHM")
 # ========== get curr user details ==========
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
-
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
