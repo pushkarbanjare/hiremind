@@ -5,20 +5,10 @@ from app.database.mongodb import get_db
 from app.database.models.resume import create_resume_document
 from app.database.schemas.resume import ResumeSaveRequest, ResumeResponse
 from app.core.dependency import get_current_user
-
-# later we'll move this to services
-def generate_embeddings(text: str):
-    return [0.0]
+from app.services.resume_parser import extract_text_from_pdf
+from app.services.embedding import generate_embeddings
 
 router = APIRouter(prefix="/resume", tags=["resume"],)
-
-# ========== pdf to text function ==========
-def extract_text_from_pdf(pdf_bytes: bytes) -> str:
-    text = ""
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    for page in doc:
-        text += page.get_text()
-    return text.strip()
 
 # ========== route: upload pdf ==========
 @router.post("/upload")
