@@ -37,6 +37,29 @@ IMPACT_WORDS = {
     "improved",
 }
 
+# ========== extract weak bullets ==========
+def extract_optimizable_bullets(resume_text: str) -> list[str]:
+    sections = []
+    patterns = [
+        r"PROJECTS(.*?)(EXPERIENCE|SKILLS|EDUCATION|ACHIEVEMENTS|$)",
+        r"EXPERIENCE(.*?)(SKILLS|EDUCATION|ACHIEVEMENTS|$)"
+    ]
+    for pattern in patterns:
+        match = re.search(
+            pattern, 
+            resume_text,
+            re.DOTALL | re.IGNORECASE
+        )
+        if match:
+            sections.append(match.group(1))
+    content = "\n".join(sections)
+    bullets = [
+        line.strip()
+        for line in content.split("\n")
+        if line.strip().startswith("•")
+    ]
+    return bullets
+
 # ========== metric detection ==========
 def contains_metric(bullet: str) -> bool:
     patterns = [
@@ -74,34 +97,51 @@ def contains_impact(bullet: str) -> bool:
 # ========== optimization guardrail ==========
 def needs_optimization(bullet: str) -> bool:
     score = sum([contains_metric(bullet), contains_action_verb(bullet), contains_impact(bullet)])
-    return score < 2
-
-# ========== single bullet optimization ==========
-def optimize_bullet(bullet: str) -> str:
-    prompt = f"""
-You are an expert resume writer.
-Rewrite the resume bullet.
-Rules:
-1. Return ONLY the rewritten bullet.
-2. No explanation.
-3. No numbering.
-4. No markdown.
-5. Maximum 30 words.
-6. ATS friendly.
-7. Preserve technologies.
-8. Add measurable impact if reasonably inferable.
-9. Use strong action verbs.
-Resume Bullet:
-{bullet}
-"""
-    return generate(prompt).strip()
+    return score < 3
 
 # ========== bulk optimization ==========
 def optimize_resume(bullets: list[str]) -> list[str]:
     optimized_bullets = []
-    for bullet in bullets:
+    weak_bullets = []
+    weak_indices = []
+
+    # ========== separate weak and strong bullets ==========
+    for index, bullet in enumerate(bullets):
         if needs_optimization(bullet):
-            optimized_bullets.append(optimize_bullet(bullet))
-        else:
-            optimized_bullets.append(bullet)
+            weak_bullets.append(bullet)
+            weak_indices.append(index)
+        optimized_bullets.append(bullet)
+
+    if not weak_bullets:
+        return optimized_bullets
+
+    prompt = f"""
+You are an expert resume writer.
+Rewrite ONLY the provided resume bullets.
+
+Rules:
+1. Return exactly {len(weak_bullets)} bullets.
+2. Keep the same order.
+3. No explanations.
+4. No numbering.
+5. No markdown.
+6. Maximum 30 words per bullet.
+7. Preserve technologies.
+8. Use strong action verbs.
+9. Add measurable impact only if reasonably inferable.
+10. Return one bullet per line.
+
+Resume Bullets:
+{chr(10).join(weak_bullets)}
+"""
+    response = generate(prompt)
+    improved_bullets = [
+        line.strip()
+        for line in response.split("\n")
+        if line.strip()
+    ]
+
+    # ========== replace weak bullets ==========
+    for idx, improved in zip(weak_indices, improved_bullets):
+        optimized_bullets[idx] = improved
     return optimized_bullets

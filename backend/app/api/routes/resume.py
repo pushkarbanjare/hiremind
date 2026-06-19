@@ -7,6 +7,7 @@ from app.database.schemas.resume import ResumeSaveRequest, ResumeResponse
 from app.core.dependency import get_current_user
 from app.services.resume_parser import extract_text_from_pdf
 from app.services.embedding import generate_embeddings
+from app.services.text_cleaner import clean_text
 
 router = APIRouter(prefix="/resume", tags=["resume"],)
 
@@ -18,6 +19,7 @@ async def upload_resume(file: UploadFile = File(...)):
     
     pdf_bytes = await file.read()
     resume_text = extract_text_from_pdf(pdf_bytes)
+    resume_text = clean_text(resume_text)
     return {"resume_text": resume_text}
 
 # ========== route: save resume ==========
@@ -70,6 +72,7 @@ async def update_resume(file: UploadFile = File(...), user: str = Depends(get_cu
 
     pdf_bytes = await file.read()
     resume_text = (extract_text_from_pdf(pdf_bytes))
+    resume_text = clean_text(resume_text)
     resume_embedding = generate_embeddings(resume_text)
 
     resumes.update_one({"user_id": user}, {"$set": {

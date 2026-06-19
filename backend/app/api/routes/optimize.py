@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from app.database.mongodb import get_db
 from app.database.schemas.optimize import OptimizeResponse
 from app.core.dependency import get_current_user
-from app.services.optimization import optimize_resume
+from app.services.optimization import optimize_resume, extract_optimizable_bullets
 
 router = APIRouter(prefix="/optimize", tags=["optimize"],)
 
@@ -21,11 +21,7 @@ def optimize(user: str = Depends(get_current_user),):
         return {"optimized_resume": optimized_resume}
     
     # ========= extract bullets ==========
-    bullets = [
-        line.strip()
-        for line in resume["resume_text"].split("\n")
-        if line.strip()
-    ]
+    bullets = extract_optimizable_bullets(resume["resume_text"])
     optimized_resume = optimize_resume(bullets)
     
     resumes.update_one({"user_id": user}, {"$set": {
