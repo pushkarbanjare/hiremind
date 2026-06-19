@@ -1,6 +1,7 @@
-from fastapi import  APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi import  APIRouter, Depends, UploadFile, File, HTTPException, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from datetime import datetime, timezone
-import fitz
 from app.database.mongodb import get_db
 from app.database.models.resume import create_resume_document
 from app.database.schemas.resume import ResumeSaveRequest, ResumeResponse
@@ -9,11 +10,16 @@ from app.services.resume_parser import extract_text_from_pdf
 from app.services.embedding import generate_embeddings
 from app.services.text_cleaner import clean_text
 
-router = APIRouter(prefix="/resume", tags=["resume"],)
+# ========== router initialization ==========
+router = APIRouter(prefix="/resume", tags=["resume"])
+
+# ========= rate limiter ==========
+limiter = Limiter(key_func=get_remote_address)
 
 # ========== route: upload pdf ==========
 @router.post("/upload")
-async def upload_resume(file: UploadFile = File(...)):
+@limiter.limit("10/day")
+async def upload_resume(request: Request, file: UploadFile = File(...)):
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
     
@@ -24,7 +30,8 @@ async def upload_resume(file: UploadFile = File(...)):
 
 # ========== route: save resume ==========
 @router.post("/save")
-def save_resume(data: ResumeSaveRequest, user: str = Depends(get_current_user)):
+@limiter.limit("10/day")
+def save_resume(request: Request, data: ResumeSaveRequest, user: str = Depends(get_current_user)):
     db = get_db()
     resumes = db["resumes"]
     resume_embedding = generate_embeddings(data.resume_text)
@@ -46,7 +53,8 @@ def save_resume(data: ResumeSaveRequest, user: str = Depends(get_current_user)):
 
 # ========== route: get resume ==========
 @router.get("/", response_model=ResumeResponse)
-def get_resume(user: str = Depends(get_current_user)):
+@limiter.limit("10/day")
+def get_resume(request: Request, user: str = Depends(get_current_user)):
     db = get_db()
     resumes = db["resumes"]
     resume = resumes.find_one({"user_id": user})
@@ -60,7 +68,8 @@ def get_resume(user: str = Depends(get_current_user)):
 
 # ========== route: update resume ==========
 @router.put("/")
-async def update_resume(file: UploadFile = File(...), user: str = Depends(get_current_user)):
+@limiter.limit("10/day")
+async def update_resume(request: Request, file: UploadFile = File(...), user: str = Depends(get_current_user)):
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 
@@ -87,7 +96,8 @@ async def update_resume(file: UploadFile = File(...), user: str = Depends(get_cu
 
 # ========== route: delete resume ==========
 @router.delete("/")
-def delete_resume(user: str = Depends(get_current_user)):
+@limiter.limit("10/day")
+def delete_resume(request: Request, user: str = Depends(get_current_user)):
     db = get_db()
     resumes = db["resumes"]
     result = resumes.delete_one({"user_id": user})

@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from passlib.context import CryptContext
 from app.database.mongodb import get_db
 from app.database.models.user import create_user_document
@@ -7,6 +9,9 @@ from app.core.security import create_access_token
 
 # ========== router initialization ==========
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+# ========= rate limiter ==========
+limiter = Limiter(key_func=get_remote_address)
 
 # ========== password hashing ==========
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -18,7 +23,8 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 # ========== signup ==========
 @router.post("/signup")
-def signup(user: SignupRequest):
+@limiter.limit("10/min")
+def signup(request: Request, user: SignupRequest):
     db = get_db()
     users = db["users"]
     if users.find_one({"email": user.email}):
@@ -32,7 +38,8 @@ def signup(user: SignupRequest):
 
 # ========== login ==========
 @router.post("/login")
-def login(user: LoginRequest):
+@limiter.limit("10/min")
+def login(request: Request, user: LoginRequest):
     db = get_db()
     users = db["users"]
     db_user = users.find_one({"email": user.email})

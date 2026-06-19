@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from app.database.mongodb import get_db
 from app.database.schemas.analyze import AnalyzeRequest, AnalyzeResponse
 from app.core.dependency import get_current_user
@@ -8,11 +10,16 @@ from app.services.skill_gap import analyze_skill_gap
 from app.services.scoring import calculate_match_score
 from app.services.text_cleaner import clean_text
 
-router = APIRouter(prefix="/analyze", tags=["analyze"],)
+# ========== router initialization ==========
+router = APIRouter(prefix="/analyze", tags=["analyze"])
+
+# ========= rate limiter ==========
+limiter = Limiter(key_func=get_remote_address)
 
 # ========= analyze resume ==========
 @router.post("/", response_model=AnalyzeResponse)
-def analyze_resume(request: AnalyzeRequest, user: str = Depends(get_current_user)):
+@limiter.limit("10/hour")
+def analyze_resume(request: Request, data: AnalyzeRequest, user: str = Depends(get_current_user)):
     db = get_db()
     resumes = db["resumes"]
     resume = resumes.find_one({"user_id": user})
@@ -20,7 +27,7 @@ def analyze_resume(request: AnalyzeRequest, user: str = Depends(get_current_user
         raise HTTPException(status_code=404, detail="Resume not found")
 
     resume_embedding = resume["resume_embedding"]
-    clean_jd = clean_text(request.jd_text)
+    clean_jd = clean_text(data.jd_text)
     jd_embedding = generate_embeddings(clean_jd)
     
     # ========= semantic similarity ==========
